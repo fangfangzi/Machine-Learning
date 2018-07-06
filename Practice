@@ -1,0 +1,190 @@
+
+# coding: utf-8
+
+# In[1]:
+
+
+from sklearn import datasets
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+from sklearn import preprocessing
+from sklearn.cross_validation import train_test_split
+from sklearn.cross_validation import cross_val_score
+import numpy as np
+import sklearn
+get_ipython().run_line_magic('matplotlib', 'notebook')
+
+
+# In[3]:
+
+
+loaded_data = datasets.load_boston()
+data_x = loaded_data.data
+data_y = loaded_data.target
+
+
+# In[16]:
+
+
+model = LinearRegression(fit_intercept=True,n_jobs=4)
+model.fit(data_x,data_y)
+
+
+# In[17]:
+
+
+model.predict(data_x[:4])
+
+
+# In[6]:
+
+
+data_y[:4]
+
+
+# In[7]:
+
+
+x,y = datasets.make_regression(n_samples=100,n_targets=1,n_features=1,noise=20)
+
+
+# In[8]:
+
+
+plt.scatter(x,y)
+
+
+# In[10]:
+
+
+model.coef_
+
+
+# In[12]:
+
+
+data_x[:1]
+
+
+# In[18]:
+
+
+model.score(data_x,data_y)
+
+
+# In[21]:
+
+
+X = preprocessing.minmax_scale(data_x,feature_range=(-1,1))
+
+
+# In[22]:
+
+
+X
+
+
+# In[24]:
+
+
+iris = datasets.load_iris()
+x = iris.data
+y = iris.target
+
+
+# In[25]:
+
+
+x_train,x_test,y_train,y_test = train_test_split(x,y,random_state = 4)
+
+
+# In[35]:
+
+
+knn = sklearn.neighbors.KNeighborsClassifier(n_neighbors = 10)
+
+
+# In[36]:
+
+
+knn.fit(x_train,y_train)
+
+
+# In[37]:
+
+
+scores = cross_val_score(knn,x,y,cv = 5,scoring='accuracy')
+
+
+# In[38]:
+
+
+scores.mean()
+
+
+# In[63]:
+
+
+k_range = range(1,31)
+k_scores1 = []
+k_scores2 = []
+
+
+# In[64]:
+
+
+for k in k_range:
+    knn = sklearn.neighbors.KNeighborsClassifier(n_neighbors = k,n_jobs=4)
+    scores = cross_val_score(knn,x,y,cv = 10,scoring='accuracy')
+    loss = -cross_val_score(knn,x,y,cv = 10,scoring='neg_mean_squared_error')
+    k_scores1.append(scores.mean())
+    k_scores2.append(loss.mean())
+
+
+# In[68]:
+
+
+plt.plot(k_range,k_scores1)
+
+
+# In[2]:
+
+
+clf = sklearn.svm.SVC()
+
+
+# In[3]:
+
+
+iris = datasets.load_iris()
+
+
+# In[4]:
+
+
+x,y = iris.data,iris.target
+
+
+# In[5]:
+
+
+clf.fit(x,y)
+
+
+# In[8]:
+
+
+sklearn.externals.joblib.dump(clf,'save/clf.pkl')
+
+
+# In[9]:
+
+
+clf2 = sklearn.externals.joblib.load('save/clf.pkl')
+
+
+# In[11]:
+
+
+clf2.predict(x[:10])
+
